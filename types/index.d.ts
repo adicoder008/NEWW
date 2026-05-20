@@ -16,6 +16,15 @@ interface Resume {
 
 interface Feedback {
   overallScore: number;
+  jobMatch?: {
+    score: number;
+    summary: string;
+  };
+  skillsGap?: {
+    matched: string[];
+    missing: string[];
+  };
+  improvements?: string[];
   ATS: {
     score: number;
     tips: {

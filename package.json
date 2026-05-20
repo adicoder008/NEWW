@@ -5,6 +5,7 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
+    "dev:api": "npm run dev --prefix server",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
@@ -13,7 +14,6 @@
     "@react-router/serve": "^7.7.1",
     "clsx": "^2.1.1",
     "isbot": "^5.1.27",
-    "pdfjs-dist": "^5.3.93",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.8",

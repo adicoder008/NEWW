@@ -4,3 +4,10 @@
 # React Router
 /.react-router/
 /build/
+
+.env
+server/.env
+server/data/uploads/*
+server/data/meta/*
+!server/data/.gitkeep
+!server/data/uploads/.gitkeep

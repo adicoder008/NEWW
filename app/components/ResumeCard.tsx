@@ -1,47 +1,46 @@
-import {Link} from "react-router";
+import { Link } from "react-router";
 import ScoreCircle from "~/components/ScoreCircle";
-import {useEffect, useState} from "react";
-import {usePuterStore} from "~/lib/puter";
+import type { AnalysisSummary } from "~/lib/api";
 
-const ResumeCard = ({ resume: { id, companyName, jobTitle, feedback, imagePath } }: { resume: Resume }) => {
-    const { fs } = usePuterStore();
-    const [resumeUrl, setResumeUrl] = useState('');
+const ResumeCard = ({ summary }: { summary: AnalysisSummary }) => {
+  const score = summary.overallScore ?? 0;
+  const label = summary.companyName || summary.fileName;
+  const sub = summary.jobTitle || "General review";
+  const date = new Date(summary.createdAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
 
-    useEffect(() => {
-        const loadResume = async () => {
-            const blob = await fs.read(imagePath);
-            if(!blob) return;
-            let url = URL.createObjectURL(blob);
-            setResumeUrl(url);
-        }
+  const scoreColor =
+    score > 69 ? "text-[#254d4a]" : score > 49 ? "text-[#73321b]" : "text-[#752522]";
 
-        loadResume();
-    }, [imagePath]);
+  return (
+    <Link
+      to={`/resume/${summary.id}`}
+      className="group flex flex-col gap-5 rounded-2xl bg-white border border-gray-100 p-5 shadow-sm hover:shadow-lg hover:border-[#a7bff1] transition-all duration-200"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium text-[#606beb] uppercase tracking-wide mb-1">
+            {date}
+          </p>
+          <h2 className="text-lg font-bold text-gray-900 truncate group-hover:text-[#606beb] transition-colors">
+            {label}
+          </h2>
+          <p className="text-sm text-dark-200 truncate mt-0.5">{sub}</p>
+        </div>
+        <ScoreCircle score={score} />
+      </div>
+      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <span className={`text-sm font-semibold ${scoreColor}`}>
+          Overall {score}/100
+        </span>
+        <span className="text-sm font-medium text-[#606beb] group-hover:translate-x-0.5 transition-transform">
+          View report →
+        </span>
+      </div>
+    </Link>
+  );
+};
 
-    return (
-        <Link to={`/resume/${id}`} className="resume-card animate-in fade-in duration-1000">
-            <div className="resume-card-header">
-                <div className="flex flex-col gap-2">
-                    {companyName && <h2 className="!text-black font-bold break-words">{companyName}</h2>}
-                    {jobTitle && <h3 className="text-lg break-words text-gray-500">{jobTitle}</h3>}
-                    {!companyName && !jobTitle && <h2 className="!text-black font-bold">Resume</h2>}
-                </div>
-                <div className="flex-shrink-0">
-                    <ScoreCircle score={feedback.overallScore} />
-                </div>
-            </div>
-            {resumeUrl && (
-                <div className="gradient-border animate-in fade-in duration-1000">
-                    <div className="w-full h-full">
-                        <img
-                            src={resumeUrl}
-                            alt="resume"
-                            className="w-full h-[350px] max-sm:h-[200px] object-cover object-top"
-                        />
-                    </div>
-                </div>
-                )}
-        </Link>
-    )
-}
-export default ResumeCard
+export default ResumeCard;
